@@ -44,15 +44,15 @@ public Properties p;
 			// OS
 			if(os.equalsIgnoreCase("windows"))
 			{
-				capabilities.setPlatform(Plateform.WIN11)
+				capabilities.setPlatform(Platform.WIN11); //WIN10
 			}
 			else if(os.equalsIgnoreCase("mac"))
 			{
-				capabilities.setPlatform(Plateform.MAC)
+				capabilities.setPlatform(Platform.MAC);
 			}
 			else if(os.equalsIgnoreCase("linux"))
 			{
-				capabilities.setPlatform(Plateform.LINUX)
+				capabilities.setPlatform(Platform.LINUX);
 			}
 			else
 			{
@@ -70,6 +70,7 @@ public Properties p;
 				default : System.out.println("No Browser name..");
 				return;
 			}
+			driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), capabilities);
 		}		
 		
 		if(p.getProperty("execution_environment").equalsIgnoreCase("remote"))
