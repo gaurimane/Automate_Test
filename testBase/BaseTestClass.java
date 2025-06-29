@@ -28,7 +28,7 @@ public Properties p;
 	
 	@BeforeClass(groups={"sanity","regression","master","LoginDD"})
 	@Parameters({"os","browser"})
-	public void LaunchApp(String o_s,String br) throws IOException
+	public void LaunchApp(String os,String br) throws IOException
 	{
 		//Loading config.properties file
 		FileReader file= new FileReader("./src//test//resources//config.properties");
@@ -36,14 +36,54 @@ public Properties p;
 		p.load(file);
 		
 		logger = LogManager.getLogger(BaseTestClass.class);
-		switch(br.toLowerCase())
+		
+		if(p.getProperty("execution_environment").equalsIgnoreCase("remote"))
 		{
-			case "chrome" : driver = new ChromeDriver();
-			break;
-			case "edge" : driver = new EdgeDriver();
-			break;
-			default : System.out.println("Invalid Browser name..");
-			return;
+			DesiredCapabilities capabilities = new DesiredCapabilities();
+			
+			// OS
+			if(os.equalsIgnoreCase("windows"))
+			{
+				capabilities.setPlatform(Platform.WIN11); //WIN10
+			}
+			else if(os.equalsIgnoreCase("mac"))
+			{
+				capabilities.setPlatform(Platform.MAC);
+			}
+			else if(os.equalsIgnoreCase("linux"))
+			{
+				capabilities.setPlatform(Platform.LINUX);
+			}
+			else
+			{
+				System.out.println("No Maching OS...");
+				return;
+			}
+			
+			//BROWSERS
+			switch(br.toLowerCase())
+			{
+				case "chrome" : capabilities.setBrowserName("chrome");
+				break;
+				case "edge" : capabilities.setBrowserName("edge");
+				break;
+				default : System.out.println("No Browser name..");
+				return;
+			}
+			driver = new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"), capabilities);
+		}		
+		
+		if(p.getProperty("execution_environment").equalsIgnoreCase("remote"))
+		{
+			switch(br.toLowerCase())
+			{
+				case "chrome" : driver = new ChromeDriver();
+				break;
+				case "edge" : driver = new EdgeDriver();
+				break;
+				default : System.out.println("Invalid Browser name..");
+				return;
+			}
 		}
 		
 		driver.manage().deleteAllCookies();
